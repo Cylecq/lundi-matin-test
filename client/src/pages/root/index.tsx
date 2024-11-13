@@ -6,6 +6,7 @@ import axios from "axios";
 import ClientTable from "./ClientTable";
 import Box from "../../components/Box";
 import { ApiResponse, Client } from "../../lib/types";
+import { validateName } from "../../lib/validator";
 
 interface Inputs {
   search: string;
@@ -47,6 +48,14 @@ const ClientSearch = (): JSX.Element => {
    * @param {string} search le nom ou la dénomination a rechercher
    */
   const searchClients = async (search: string): Promise<void> => {
+    // Valide le nom ou la dénomination du client
+    const isSearchValide = validateName(search);
+    if (!isSearchValide) {
+      alert("Nom ou denomination invalide");
+      return;
+    }
+
+    // Requête GET
     const response = await axios.get<ApiResponse<Client[]>>(
       `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel&nom=${search}`,
       {
@@ -56,6 +65,7 @@ const ClientSearch = (): JSX.Element => {
       }
     );
 
+    // Mettre a jour la liste des clients
     setClients(response.data.datas);
   };
 

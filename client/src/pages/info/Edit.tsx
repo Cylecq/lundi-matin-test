@@ -3,6 +3,14 @@ import Box from "../../components/Box";
 import { ApiResponse, Client } from "../../lib/types";
 import axios from "axios";
 import { useState } from "react";
+import {
+  validateAddress,
+  validateCity,
+  validateEmail,
+  validateName,
+  validatePhone,
+  validatePostalCode,
+} from "../../lib/validator";
 
 interface Props {
   client: Client;
@@ -55,6 +63,49 @@ function Edit({ client, setIsEditMode }: Props) {
     postalCode: string,
     city: string
   ) => {
+    // Valide le nom ou la dénomination du client
+    const isNameValide = validateName(name);
+    if (!isNameValide) {
+      alert("Nom ou denomination invalide");
+      return;
+    }
+
+    // Valide le téléphone du client
+    const isPhoneValide = validatePhone(phone);
+    if (!isPhoneValide) {
+      alert("Numéro de téléphone invalide");
+      return;
+    }
+
+    // Valide l'email du client
+    const isEmailValide = validateEmail(email);
+    if (!isEmailValide) {
+      alert("Email invalide");
+      return;
+    }
+
+    // Valide l'adresse du client
+    const isAddressValide = validateAddress(address);
+    if (!isAddressValide) {
+      alert("Adresse invalide");
+      return;
+    }
+
+    // Valide le code postal du client
+    const isPostalCodeValide = validatePostalCode(postalCode);
+    if (!isPostalCodeValide) {
+      alert("Code postal invalide");
+      return;
+    }
+
+    // Valide la ville du client
+    const isCityValide = validateCity(city);
+    if (!isCityValide) {
+      alert("Ville invalide");
+      return;
+    }
+
+    // Requête PUT
     await axios.put<ApiResponse<void>>(
       `${import.meta.env.VITE_SERVER_URL}/clients/${client.id}`,
       {
