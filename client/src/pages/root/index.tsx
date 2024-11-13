@@ -3,12 +3,14 @@ import Box from "../../components/Box";
 import { ApiResponse, Client } from "../../lib/types";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface Inputs {
   search: string;
 }
 
 function Root() {
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<Inputs>();
 
   const [clients, setClients] = useState<Client[]>([]);
@@ -131,7 +133,10 @@ function Root() {
                   <td className="px-4 py-3">{client.ville}</td>
                   <td className="px-4 py-3">{client.tel}</td>
                   <td className="px-4 py-3 text-right">
-                    <button className="flex gap-1 px-3 py-1 text-sm text-white bg-blue-500 rounded-3xl hover:bg-blue-600">
+                    <button
+                      className="flex gap-1 px-3 py-1 text-sm text-white bg-blue-500 rounded-3xl hover:bg-blue-600"
+                      onClick={() => navigate(`/info/${client.id}`)}
+                    >
                       <div className="w-5">
                         <img src="/svg/search.svg" alt="search" />
                       </div>
