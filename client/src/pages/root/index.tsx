@@ -1,44 +1,28 @@
+import { useEffect, useState } from "react";
 import Box from "../../components/Box";
-
-const contacts = [
-  {
-    initials: "PM",
-    name: "Paul MICHEL",
-    address: "",
-    city: "",
-    phone: "",
-  },
-  {
-    initials: "MB",
-    name: "Mathieu BOMPART",
-    address: "836 rue du Mas de Verchant",
-    city: "34000 - MONTPELLIER",
-    phone: "01 23 45 67 89",
-  },
-  {
-    initials: "CP",
-    name: "Céline PERIK",
-    address: "836 rue du Mas de Verchant",
-    city: "34000 - MONTPELLIER",
-    phone: "09 87 65 43 21",
-  },
-  {
-    initials: "JB",
-    name: "Jean-Yve BAUDIN",
-    address: "",
-    city: "",
-    phone: "",
-  },
-  {
-    initials: "DR",
-    name: "Dominguez ROGER",
-    address: "836 rue du Mas de Verchant",
-    city: "34000 - MONTPELLIER",
-    phone: "02 34 56 78 90",
-  },
-];
+import { ApiResponse, Client } from "../../lib/types";
+import axios from "axios";
 
 function Root() {
+  const [clients, setClients] = useState<Client[]>([]);
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      const response = await axios.get<ApiResponse<Client[]>>(
+        `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setClients(response.data.datas);
+    };
+
+    fetchClients();
+  }, []);
+
   return (
     <div className="flex flex-col gap-4">
       <Box>
@@ -58,10 +42,7 @@ function Root() {
             />
           </div>
           <div className="flex justify-end">
-            <button
-              type="submit"
-              className="bg-secondary px-6 py-2 my-2 text-white rounded-md hover:underline"
-            >
+            <button type="submit" className="bg-secondary px-6 py-2 my-2 text-white rounded-md hover:underline">
               Rechercher
             </button>
           </div>
@@ -81,21 +62,25 @@ function Root() {
             </tr>
           </thead>
           <tbody>
-            {contacts.map((contact, index) => (
+            {clients.map((client, index) => (
               <tr key={index} className="border-b bg-white hover:bg-gray-50">
                 <td className="px-4 py-3 flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                     <span className="text-sm text-gray-600">
-                      {contact.initials}
+                      {client.nom
+                        .split(" ")
+                        .map((word) => word[0])
+                        .join("")
+                        .toLocaleUpperCase()}
                     </span>
                   </div>
                 </td>
                 <td>
-                  <span className="font-bold">{contact.name}</span>
+                  <span className="font-bold">{client.nom}</span>
                 </td>
-                <td className="px-4 py-3">{contact.address}</td>
-                <td className="px-4 py-3">{contact.city}</td>
-                <td className="px-4 py-3">{contact.phone}</td>
+                <td className="px-4 py-3">{client.adresse}</td>
+                <td className="px-4 py-3">{client.ville}</td>
+                <td className="px-4 py-3">{client.tel}</td>
                 <td className="px-4 py-3 text-right">
                   <button className="flex gap-1 px-3 py-1 text-sm text-white bg-blue-500 rounded-3xl hover:bg-blue-600">
                     <div className="w-5">
