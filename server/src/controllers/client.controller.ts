@@ -43,6 +43,10 @@ export class ClientController {
         throw new ApiError(401, "Unauthorized");
       }
 
+      if (!req.params.id) {
+        throw new ApiError(400, "Missing id");
+      }
+
       const response = await this.apiService.getClient(
         req.params.id,
         authToken
@@ -79,6 +83,14 @@ export class ClientController {
           updateData[field] = req.body[field];
         }
       });
+
+      if (Object.keys(updateData).length === 0) {
+        throw new ApiError(400, "No fields to update");
+      }
+
+      if (!req.params.id) {
+        throw new ApiError(400, "Missing id");
+      }
 
       const response = await this.apiService.updateClient(
         req.params.id,
