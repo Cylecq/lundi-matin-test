@@ -11,14 +11,25 @@ interface Inputs {
   search: string;
 }
 
-const ClientSearch = () => {
+/**
+ * Page de recherche de fiche de contact
+ *
+ * @returns JSX.Element
+ */
+const ClientSearch = (): JSX.Element => {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<Inputs>();
 
+  /**
+   * Mise en place des hooks pour gerer les clients et le chargement
+   */
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchClients = async () => {
+  /**
+   * Renvoie la liste des clients
+   */
+  const fetchClients = async (): Promise<void> => {
     const response = await axios.get<ApiResponse<Client[]>>(
       `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel`,
       {
@@ -31,7 +42,11 @@ const ClientSearch = () => {
     setClients(response.data.datas);
   };
 
-  const searchClients = async (search: string) => {
+  /**
+   * Renvoie la liste des clients correspondant a la recherche
+   * @param {string} search le nom ou la dénomination a rechercher
+   */
+  const searchClients = async (search: string): Promise<void> => {
     const response = await axios.get<ApiResponse<Client[]>>(
       `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel&nom=${search}`,
       {
@@ -44,7 +59,11 @@ const ClientSearch = () => {
     setClients(response.data.datas);
   };
 
-  const onSubmit = async (data: Inputs) => {
+  /**
+   * Gestion de la soumission du formulaire
+   * @param {Inputs} data le formulaire a traiter
+   */
+  const onSubmit = async (data: Inputs): Promise<void> => {
     setLoading(true);
     try {
       await searchClients(data.search);

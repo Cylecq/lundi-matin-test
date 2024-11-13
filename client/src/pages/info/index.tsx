@@ -6,6 +6,11 @@ import { ApiResponse, Client } from "../../lib/types";
 import Informations from "./Informations";
 import Edit from "./Edit";
 
+/**
+ * Page de fiche de contact
+ *
+ * @returns {JSX.Element}
+ */
 function Info() {
   const location = useLocation();
 
@@ -13,6 +18,10 @@ function Info() {
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
+  /**
+   * Fonction pour recuperer un client
+   * @param {string} id - L'ID du client
+   */
   const fetchClient = async (id: string) => {
     const response = await axios.get<ApiResponse<Client>>(`${import.meta.env.VITE_SERVER_URL}/clients/${id}`, {
       headers: {

@@ -18,6 +18,12 @@ interface Inputs {
   ville: string;
 }
 
+/**
+ * Composant pour editer un client
+ * @param {Client} client - Les informations du client
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setIsEditMode - La fonction a appeler pour sortir du mode edition
+ * @returns {JSX.Element}
+ */
 function Edit({ client, setIsEditMode }: Props) {
   const { register, handleSubmit } = useForm<Inputs>({
     defaultValues: {
@@ -32,6 +38,15 @@ function Edit({ client, setIsEditMode }: Props) {
 
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Fonction pour mettre a jour un client en base
+   * @param {string} name - Le nouveau nom du client
+   * @param {string} phone - Le nouveau numero de telephone du client
+   * @param {string} email - Le nouvel email du client
+   * @param {string} address - La nouvelle adresse du client
+   * @param {string} postalCode - Le nouveau code postal du client
+   * @param {string} city - La nouvelle ville du client
+   */
   const editClient = async (
     name: string,
     phone: string,
@@ -58,6 +73,10 @@ function Edit({ client, setIsEditMode }: Props) {
     );
   };
 
+  /**
+   * Fonction a appeler lors de la soumission du formulaire
+   * @param {Inputs} data - Les donnees du formulaire
+   */
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { nom, tel, email, adresse, code_postal, ville } = data;
     try {

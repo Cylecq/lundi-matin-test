@@ -1,6 +1,13 @@
 import { Client } from "../../lib/types";
 import ClientRow from "./ClientRow";
 
+/**
+ * Affiche une table de clients
+ * @param {Client[]} clients - Liste des clients a afficher
+ * @param {boolean} loading - Si la liste est en cours de chargement
+ * @param {(client: Client) => void} onViewClick - Fonction a appeler lorsque l'utilisateur clique sur "Voir"
+ * @returns {JSX.Element}
+ */
 const ClientTable = ({
   clients,
   loading,
