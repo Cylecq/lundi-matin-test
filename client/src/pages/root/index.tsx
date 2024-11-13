@@ -2,12 +2,46 @@ import { useEffect, useState } from "react";
 import Box from "../../components/Box";
 import { ApiResponse, Client } from "../../lib/types";
 import axios from "axios";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+interface Inputs {
+  search: string;
+}
 
 function Root() {
+  const { register, handleSubmit } = useForm<Inputs>();
+
   const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const searchClients = async (search: string) => {
+    const response = await axios.get<ApiResponse<Client[]>>(
+      `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel&nom=${search}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    setClients(response.data.datas);
+  };
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const { search } = data;
+    setLoading(true);
+    try {
+      await searchClients(search);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchClients = async () => {
+      setLoading(true);
       const response = await axios.get<ApiResponse<Client[]>>(
         `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel`,
         {
@@ -18,6 +52,7 @@ function Root() {
       );
 
       setClients(response.data.datas);
+      setLoading(false);
     };
 
     fetchClients();
@@ -29,7 +64,7 @@ function Root() {
         <p className="text-2xl">Recherche d'une fiche de contact</p>
       </Box>
       <Box>
-        <form className="w-96 mx-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-96 mx-auto">
           <label htmlFor="search" className="my-2 font-bold">
             Renseigner un nom ou une dénomination
           </label>
@@ -39,6 +74,7 @@ function Root() {
               id="search"
               placeholder="Nom ou dénomination"
               className="w-full border border-slate-100 my-2 px-2 py-1"
+              {...register("search")}
             />
           </div>
           <div className="flex justify-end">
@@ -62,35 +98,49 @@ function Root() {
             </tr>
           </thead>
           <tbody>
-            {clients.map((client, index) => (
-              <tr key={index} className="border-b bg-white hover:bg-gray-50">
-                <td className="px-4 py-3 flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-sm text-gray-600">
-                      {client.nom
-                        .split(" ")
-                        .map((word) => word[0])
-                        .join("")
-                        .toLocaleUpperCase()}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <span className="font-bold">{client.nom}</span>
-                </td>
-                <td className="px-4 py-3">{client.adresse}</td>
-                <td className="px-4 py-3">{client.ville}</td>
-                <td className="px-4 py-3">{client.tel}</td>
-                <td className="px-4 py-3 text-right">
-                  <button className="flex gap-1 px-3 py-1 text-sm text-white bg-blue-500 rounded-3xl hover:bg-blue-600">
-                    <div className="w-5">
-                      <img src="/svg/search.svg" alt="search" />
-                    </div>
-                    Voir
-                  </button>
+            {loading ? (
+              <tr>
+                <td colSpan={6} className="text-center py-4">
+                  Chargement...
                 </td>
               </tr>
-            ))}
+            ) : clients.length > 0 ? (
+              clients.map((client, index) => (
+                <tr key={index} className="border-b bg-white hover:bg-gray-50">
+                  <td className="px-4 py-3 flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-sm text-gray-600">
+                        {client.nom
+                          .split(" ")
+                          .map((word) => word[0])
+                          .join("")
+                          .toLocaleUpperCase()}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className="font-bold">{client.nom}</span>
+                  </td>
+                  <td className="px-4 py-3">{client.adresse}</td>
+                  <td className="px-4 py-3">{client.ville}</td>
+                  <td className="px-4 py-3">{client.tel}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button className="flex gap-1 px-3 py-1 text-sm text-white bg-blue-500 rounded-3xl hover:bg-blue-600">
+                      <div className="w-5">
+                        <img src="/svg/search.svg" alt="search" />
+                      </div>
+                      Voir
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={6} className="text-center">
+                  Aucun contact trouvé
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
