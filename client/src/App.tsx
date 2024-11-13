@@ -3,14 +3,40 @@ import Root from "./pages/root";
 import Info from "./pages/info";
 import Edit from "./pages/edit";
 import Layout from "./components/Layout";
+import Login from "./pages/login";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Root />} />
-        <Route path="/info" element={<Info />} />
-        <Route path="/edit" element={<Edit />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* Protected routes */}
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <Root />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/info"
+          element={
+            <ProtectedRoute>
+              <Info />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit"
+          element={
+            <ProtectedRoute>
+              <Edit />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   );
