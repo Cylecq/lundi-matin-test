@@ -14,6 +14,19 @@ function Root() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const fetchClients = async () => {
+    const response = await axios.get<ApiResponse<Client[]>>(
+      `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    setClients(response.data.datas);
+  };
+
   const searchClients = async (search: string) => {
     const response = await axios.get<ApiResponse<Client[]>>(
       `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel&nom=${search}`,
@@ -40,22 +53,15 @@ function Root() {
   };
 
   useEffect(() => {
-    const fetchClients = async () => {
-      setLoading(true);
-      const response = await axios.get<ApiResponse<Client[]>>(
-        `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+    setLoading(true);
 
-      setClients(response.data.datas);
-      setLoading(false);
-    };
-
-    fetchClients();
+    fetchClients()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
