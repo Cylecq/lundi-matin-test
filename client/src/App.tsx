@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Root from "./pages/root";
 import Info from "./pages/info";
-import Edit from "./pages/edit";
 import Layout from "./components/Layout";
 import Login from "./pages/login";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -26,14 +25,6 @@ function App() {
           element={
             <ProtectedRoute>
               <Info />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/edit"
-          element={
-            <ProtectedRoute>
-              <Edit />
             </ProtectedRoute>
           }
         />

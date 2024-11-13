@@ -3,12 +3,15 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import Box from "../../components/Box";
 import { ApiResponse, Client } from "../../lib/types";
+import Informations from "./Informations";
+import Edit from "./Edit";
 
 function Info() {
   const location = useLocation();
 
   const [client, setClient] = useState<Client>();
   const [loading, setLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const fetchClient = async (id: string) => {
     const response = await axios.get<ApiResponse<Client>>(`${import.meta.env.VITE_SERVER_URL}/clients/${id}`, {
@@ -27,6 +30,7 @@ function Info() {
     fetchClient(id)
       .catch(console.error)
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -50,7 +54,10 @@ function Info() {
       <Box>
         <div className="flex items-center justify-between">
           <h1 className="text-2xl">{client.nom}</h1>
-          <button className="flex items-center gap-2 bg-secondary px-6 py-2 my-2 text-white rounded-md">
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            className="flex items-center gap-2 bg-secondary px-6 py-2 my-2 text-white rounded-md"
+          >
             <div className="w-4">
               <img src="/svg/gear.svg" alt="edit" />
             </div>
@@ -58,36 +65,7 @@ function Info() {
           </button>
         </div>
       </Box>
-      <Box>
-        <div className="border-b border-slate-200">
-          <h2 className="text-lg font-bold uppercase my-4">Informations</h2>
-        </div>
-        <div className="flex justify-center">
-          <table className="my-4">
-            <tbody>
-              <tr className="h-10">
-                <td className="border-r border-slate-200 px-4 text-right font-bold">Prénom & NOM</td>
-                <td className="px-4 text-left">{client.nom}</td>
-              </tr>
-              <tr className="h-10">
-                <td className="border-r border-slate-200 px-4 text-right font-bold">Téléphone</td>
-                <td className="px-4 text-left">{client.tel}</td>
-              </tr>
-              <tr className="h-10">
-                <td className="border-r border-slate-200 px-4 text-right font-bold">Email</td>
-                <td className="px-4 text-left">{client.email}</td>
-              </tr>
-              <tr className="h-10">
-                <td className="border-r border-slate-200 px-4 text-right font-bold">Adresse</td>
-                <td className="px-4 text-left">
-                  {client.adresse} <br />
-                  {client.code_postal} {client.ville}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Box>
+      {isEditMode ? <Edit client={client} setIsEditMode={setIsEditMode} /> : <Informations client={client} />}
     </div>
   );
 }
