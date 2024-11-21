@@ -1,10 +1,9 @@
-const ClientRow = ({
-  client,
-  onViewClick,
-}: {
+type Props = {
   client: Client;
   onViewClick: (client: Client) => void;
-}) => (
+};
+
+const ClientRow = ({ client, onViewClick }: Props) => (
   <tr className="border-b bg-white hover:bg-gray-50">
     <td className="px-4 py-3 flex items-center space-x-3">
       <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">

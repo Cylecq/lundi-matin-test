@@ -1,14 +1,12 @@
 import ClientRow from "./ClientRow";
 
-const ClientTable = ({
-  clients,
-  loading,
-  onViewClick,
-}: {
+type Props = {
   clients: Client[];
   loading: boolean;
   onViewClick: (client: Client) => void;
-}) => (
+};
+
+const ClientTable = ({ clients, loading, onViewClick }: Props) => (
   <div className="w-full">
     <table className="w-full border border-slate-200">
       <thead>
@@ -21,6 +19,7 @@ const ClientTable = ({
           <th className="px-4 py-2"></th>
         </tr>
       </thead>
+
       <tbody>
         {loading ? (
           <tr>

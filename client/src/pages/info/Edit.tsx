@@ -80,6 +80,7 @@ function Edit({ client, setIsEditMode }: Props) {
                     <FormError fieldError={errors.nom} />
                   </td>
                 </tr>
+
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="tel">Téléphone</label>
@@ -94,6 +95,7 @@ function Edit({ client, setIsEditMode }: Props) {
                     <FormError fieldError={errors.tel} />
                   </td>
                 </tr>
+
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="email">Email</label>
@@ -108,6 +110,7 @@ function Edit({ client, setIsEditMode }: Props) {
                     <FormError fieldError={errors.email} />
                   </td>
                 </tr>
+
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="adresse">Adresse</label>
@@ -122,6 +125,7 @@ function Edit({ client, setIsEditMode }: Props) {
                     <FormError fieldError={errors.adresse} />
                   </td>
                 </tr>
+
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="code_postal">Code postal</label>
@@ -136,6 +140,7 @@ function Edit({ client, setIsEditMode }: Props) {
                     <FormError fieldError={errors.code_postal} />
                   </td>
                 </tr>
+
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="ville">Ville</label>
@@ -153,6 +158,7 @@ function Edit({ client, setIsEditMode }: Props) {
               </tbody>
             </table>
           </div>
+
           <div className="flex justify-end gap-1">
             <button
               type="button"

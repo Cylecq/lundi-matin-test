@@ -36,6 +36,7 @@ const ClientSearch = (): JSX.Element => {
       <Box>
         <p className="text-2xl">Recherche d'une fiche de contact</p>
       </Box>
+
       <Box>
         <form onSubmit={handleSubmit(onSubmit)} className="w-96 mx-auto">
           <label htmlFor="search" className="my-2 font-bold">
@@ -51,6 +52,7 @@ const ClientSearch = (): JSX.Element => {
             />
             <FormError fieldError={errors.search} />
           </div>
+
           <div className="flex justify-end">
             <button
               type="submit"
@@ -62,6 +64,7 @@ const ClientSearch = (): JSX.Element => {
           </div>
         </form>
       </Box>
+
       {!!clients?.datas && (
         <ClientTable
           clients={clients.datas}
