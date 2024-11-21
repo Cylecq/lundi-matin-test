@@ -20,12 +20,6 @@ interface Inputs {
   ville: string;
 }
 
-/**
- * Composant pour editer un client
- * @param {Client} client - Les informations du client
- * @param {React.Dispatch<React.SetStateAction<boolean>>} setIsEditMode - La fonction a appeler pour sortir du mode edition
- * @returns {JSX.Element}
- */
 function Edit({ client, setIsEditMode }: Props) {
   const {
     register,
@@ -53,11 +47,6 @@ function Edit({ client, setIsEditMode }: Props) {
 
   const { mutate, isPending } = useEditClient(onSuccess);
 
-  /**
-   * Fonction pour mettre a jour un client en base
-   * @param {Inputs} data - Les datas du formulaire
-
-   */
   const editClient = async (data: Inputs) => {
     mutate({
       id: client.id,

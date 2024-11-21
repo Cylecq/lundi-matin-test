@@ -1,9 +1,3 @@
-/**
- * Composant de ligne de tableau pour afficher les informations d'un client
- * @param {Client} client - Les données du client
- * @param {(client: Client) => void} onViewClick - Fonction à appeler lors du clic sur le bouton "Voir"
- * @returns {JSX.Element}
- */
 const ClientRow = ({
   client,
   onViewClick,

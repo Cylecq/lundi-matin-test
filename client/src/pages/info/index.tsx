@@ -5,11 +5,6 @@ import Informations from "./Informations";
 import Edit from "./Edit";
 import { useClient } from "../../api/client/hooks";
 
-/**
- * Page de fiche de contact
- *
- * @returns {JSX.Element}
- */
 function Info() {
   const location = useLocation();
 

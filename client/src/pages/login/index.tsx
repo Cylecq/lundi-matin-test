@@ -26,10 +26,6 @@ function Login() {
   });
   const login = useLogin();
 
-  /**
-   * Fonction à appeler lors de la soumission du formulaire
-   * @param {{ username: string; password: string }} data - Les données du formulaire
-   */
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     login.mutate(data);
   };

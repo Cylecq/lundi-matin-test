@@ -13,11 +13,6 @@ interface Inputs {
   search?: string;
 }
 
-/**
- * Page de recherche de fiche de contact
- *
- * @returns JSX.Element
- */
 const ClientSearch = (): JSX.Element => {
   const navigate = useNavigate();
   const [searchedName, setSearchedName] = useState("");
@@ -32,10 +27,6 @@ const ClientSearch = (): JSX.Element => {
     mode: "onSubmit",
   });
 
-  /**
-   * Gestion de la soumission du formulaire
-   * @param {Inputs} data le formulaire a traiter
-   */
   const onSubmit = async (data: Inputs): Promise<void> => {
     setSearchedName(data.search || "");
   };

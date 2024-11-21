@@ -4,13 +4,6 @@ type Props = {
   client: Client;
 };
 
-/**
- * Composant affichant les informations d'un client
- *
- * @param {Client} client - Les informations du client
-
- * @returns {JSX.Element} Le composant
- */
 function Informations({ client }: Props) {
   return (
     <Box>

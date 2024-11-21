@@ -14,3 +14,4 @@
 ## Comments
 - Function with a lot of parameters (ex: `editClient`) are better with one paramater that is an object
 - Don't mix language. In `Edit` there is french and english for methods parameters. Be consistent
+- JSDoc is not necessary for every function. Use it for complex functions or public functions
