@@ -1,8 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import Box from "../../components/Box";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { AuthResponse } from "../../lib/types";
+import { useLogin } from "../../api/user/hooks.ts";
 
 interface Inputs {
   username: string;
@@ -15,39 +13,15 @@ interface Inputs {
  * @returns {JSX.Element}
  */
 function Login() {
-  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<Inputs>();
-
+  const login = useLogin();
+  console.log(`${import.meta.env.VITE_SERVER_URL}/auth`);
   /**
    * Fonction à appeler lors de la soumission du formulaire
    * @param {{ username: string; password: string }} data - Les données du formulaire
    */
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { username, password } = data;
-
-    try {
-      // Requête POST pour se connecter
-      const response = await axios.post<AuthResponse>(`${import.meta.env.VITE_SERVER_URL}/auth`, {
-        username,
-        password,
-      });
-
-      // Stockage du token dans le local storage
-      localStorage.setItem("token", response.data.datas.token);
-
-      // Redirection vers la page d'accueil
-      navigate("/");
-    } catch (error: any) {
-      // Si la réponse est un 401, affichage d'un message d'erreur
-      if (error.response.status === 401) {
-        alert("Invalid username or password");
-
-        return;
-      }
-
-      // Sinon, affichage de l'erreur dans la console
-      console.error(error);
-    }
+    login.mutate(data);
   };
 
   return (
@@ -76,7 +50,10 @@ function Login() {
             className="w-full border border-slate-100 my-2 px-2 py-1"
             {...register("password")}
           />
-          <button type="submit" className="bg-success px-6 py-2 my-2 text-white rounded-md hover:underline">
+          <button
+            type="submit"
+            className="bg-success px-6 py-2 my-2 text-white rounded-md hover:underline"
+          >
             Login
           </button>
         </form>

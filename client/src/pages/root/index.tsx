@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import ClientTable from "./ClientTable";
 import Box from "../../components/Box";
-import { ApiResponse, Client } from "../../lib/types";
-import { validateName } from "../../lib/validator";
+import { useClients } from "../../api/client/hooks.ts";
 
 interface Inputs {
   search: string;
@@ -20,80 +18,16 @@ interface Inputs {
 const ClientSearch = (): JSX.Element => {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<Inputs>();
-
-  /**
-   * Mise en place des hooks pour gerer les clients et le chargement
-   */
-  const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  /**
-   * Renvoie la liste des clients
-   */
-  const fetchClients = async (): Promise<void> => {
-    const response = await axios.get<ApiResponse<Client[]>>(
-      `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    setClients(response.data.datas);
-  };
-
-  /**
-   * Renvoie la liste des clients correspondant a la recherche
-   * @param {string} search le nom ou la dénomination a rechercher
-   */
-  const searchClients = async (search: string): Promise<void> => {
-    // Valide le nom ou la dénomination du client
-    const isSearchValide = validateName(search);
-    if (!isSearchValide) {
-      alert("Nom ou denomination invalide");
-      return;
-    }
-
-    // Requête GET
-    const response = await axios.get<ApiResponse<Client[]>>(
-      `${import.meta.env.VITE_SERVER_URL}/clients?fields=nom,ville,code_postal,adresse,tel&nom=${search}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    // Mettre a jour la liste des clients
-    setClients(response.data.datas);
-  };
+  const [searchedName, setSearchedName] = useState("");
+  const { data: clients, isLoading: loading } = useClients(searchedName);
 
   /**
    * Gestion de la soumission du formulaire
    * @param {Inputs} data le formulaire a traiter
    */
   const onSubmit = async (data: Inputs): Promise<void> => {
-    setLoading(true);
-    try {
-      await searchClients(data.search);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    setSearchedName(data.search);
   };
-
-  useEffect(() => {
-    setLoading(true);
-    fetchClients()
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -115,13 +49,22 @@ const ClientSearch = (): JSX.Element => {
             />
           </div>
           <div className="flex justify-end">
-            <button type="submit" className="bg-secondary px-6 py-2 my-2 text-white rounded-md hover:underline">
+            <button
+              type="submit"
+              className="bg-secondary px-6 py-2 my-2 text-white rounded-md hover:underline"
+            >
               Rechercher
             </button>
           </div>
         </form>
       </Box>
-      <ClientTable clients={clients} loading={loading} onViewClick={(client) => navigate(`/info/${client.id}`)} />
+      {!!clients?.datas && (
+        <ClientTable
+          clients={clients.datas}
+          loading={loading}
+          onViewClick={(client) => navigate(`/info/${client.id}`)}
+        />
+      )}
     </div>
   );
 };

@@ -37,7 +37,9 @@ const ClientTable = ({
             </td>
           </tr>
         ) : clients.length > 0 ? (
-          clients.map((client, index) => <ClientRow key={index} client={client} onViewClick={onViewClick} />)
+          clients.map((client, index) => (
+            <ClientRow key={index} client={client} onViewClick={onViewClick} />
+          ))
         ) : (
           <tr>
             <td colSpan={6} className="text-center">

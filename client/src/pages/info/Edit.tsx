@@ -1,8 +1,6 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Box from "../../components/Box";
-import { ApiResponse, Client } from "../../lib/types";
-import axios from "axios";
-import { useState } from "react";
+import { Client } from "../../lib/types";
 import {
   validateAddress,
   validateCity,
@@ -11,6 +9,8 @@ import {
   validatePhone,
   validatePostalCode,
 } from "../../lib/validator";
+import { useEditClient } from "../../api/client/hooks.ts";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   client: Client;
@@ -44,7 +44,14 @@ function Edit({ client, setIsEditMode }: Props) {
     },
   });
 
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
+
+  const onSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["get", "client", client.id] });
+    setIsEditMode(false);
+  };
+
+  const { mutate, isPending } = useEditClient(onSuccess);
 
   /**
    * Fonction pour mettre a jour un client en base
@@ -55,23 +62,17 @@ function Edit({ client, setIsEditMode }: Props) {
    * @param {string} postalCode - Le nouveau code postal du client
    * @param {string} city - La nouvelle ville du client
    */
-  const editClient = async (
-    name: string,
-    phone: string,
-    email: string,
-    address: string,
-    postalCode: string,
-    city: string
-  ) => {
+  const editClient = async (data: Inputs) => {
+    const { nom, tel, email, adresse, code_postal, ville } = data;
     // Valide le nom ou la dénomination du client
-    const isNameValide = validateName(name);
+    const isNameValide = validateName(nom);
     if (!isNameValide) {
       alert("Nom ou denomination invalide");
       return;
     }
 
     // Valide le téléphone du client
-    const isPhoneValide = validatePhone(phone);
+    const isPhoneValide = validatePhone(tel);
     if (!isPhoneValide) {
       alert("Numéro de téléphone invalide");
       return;
@@ -85,68 +86,38 @@ function Edit({ client, setIsEditMode }: Props) {
     }
 
     // Valide l'adresse du client
-    const isAddressValide = validateAddress(address);
+    const isAddressValide = validateAddress(adresse);
     if (!isAddressValide) {
       alert("Adresse invalide");
       return;
     }
 
     // Valide le code postal du client
-    const isPostalCodeValide = validatePostalCode(postalCode);
+    const isPostalCodeValide = validatePostalCode(code_postal);
     if (!isPostalCodeValide) {
       alert("Code postal invalide");
       return;
     }
 
     // Valide la ville du client
-    const isCityValide = validateCity(city);
+    const isCityValide = validateCity(ville);
     if (!isCityValide) {
       alert("Ville invalide");
       return;
     }
 
-    // Requête PUT
-    await axios.put<ApiResponse<void>>(
-      `${import.meta.env.VITE_SERVER_URL}/clients/${client.id}`,
-      {
-        nom: name,
-        tel: phone,
-        email: email,
-        adresse: address,
-        code_postal: postalCode,
-        ville: city,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-  };
-
-  /**
-   * Fonction a appeler lors de la soumission du formulaire
-   * @param {Inputs} data - Les donnees du formulaire
-   */
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { nom, tel, email, adresse, code_postal, ville } = data;
-    try {
-      setLoading(true);
-      await editClient(nom, tel, email, adresse, code_postal, ville);
-      window.location.reload();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    mutate({
+      id: client.id,
+      ...data,
+    });
   };
 
   return (
     <Box>
-      {loading ? (
+      {isPending ? (
         <p>Chargement...</p>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(editClient)}>
           <div className="border-b border-slate-200">
             <h2 className="text-lg font-bold uppercase my-4">Edition</h2>
           </div>
@@ -242,7 +213,10 @@ function Edit({ client, setIsEditMode }: Props) {
             >
               Annuler
             </button>
-            <button type="submit" className="bg-success px-6 py-2 my-2 text-white rounded-md hover:underline">
+            <button
+              type="submit"
+              className="bg-success px-6 py-2 my-2 text-white rounded-md hover:underline"
+            >
               Enregistrer
             </button>
           </div>
