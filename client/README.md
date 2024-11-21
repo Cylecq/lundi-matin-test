@@ -2,6 +2,7 @@
 ### Structure
 - Export routes from Appp.tsx to Routes.tsx
 - Redirect `/` to `/login`
+- Do not export type, they will be used automatically
 
 ### Features
 - Add eslint + prettier

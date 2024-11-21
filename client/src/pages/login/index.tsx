@@ -1,6 +1,9 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import Box from "../../components/Box";
 import { useLogin } from "../../api/user/hooks.ts";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema } from "../../lib/formSchema.ts";
+import FormError from "../../components/FormError.tsx";
 
 interface Inputs {
   username: string;
@@ -13,9 +16,16 @@ interface Inputs {
  * @returns {JSX.Element}
  */
 function Login() {
-  const { register, handleSubmit } = useForm<Inputs>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<Inputs>({
+    resolver: yupResolver(loginSchema),
+    mode: "onBlur",
+  });
   const login = useLogin();
-  console.log(`${import.meta.env.VITE_SERVER_URL}/auth`);
+
   /**
    * Fonction à appeler lors de la soumission du formulaire
    * @param {{ username: string; password: string }} data - Les données du formulaire
@@ -34,25 +44,33 @@ function Login() {
       <Box>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col w-96 mx-auto border border-slate-200 px-4 py-2"
+          className="flex flex-col w-96 mx-auto border border-slate-200 px-4 py-2 gap-8"
         >
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            className="w-full border border-slate-100 my-2 px-2 py-1"
-            {...register("username")}
-          />
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            className="w-full border border-slate-100 my-2 px-2 py-1"
-            {...register("password")}
-          />
+          <div>
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              className="w-full border border-slate-100 my-2 px-2 py-1"
+              {...register("username")}
+            />
+            <FormError fieldError={errors.username} />
+          </div>
+
+          <div>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              className="w-full border border-slate-100 my-2 px-2 py-1"
+              {...register("password")}
+            />
+            <FormError fieldError={errors.password} />
+          </div>
           <button
             type="submit"
             className="bg-success px-6 py-2 my-2 text-white rounded-md hover:underline"
+            disabled={isSubmitting || !isValid}
           >
             Login
           </button>

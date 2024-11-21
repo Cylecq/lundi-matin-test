@@ -1,16 +1,10 @@
 import { useForm } from "react-hook-form";
 import Box from "../../components/Box";
-import { Client } from "../../lib/types";
-import {
-  validateAddress,
-  validateCity,
-  validateEmail,
-  validateName,
-  validatePhone,
-  validatePostalCode,
-} from "../../lib/validator";
 import { useEditClient } from "../../api/client/hooks.ts";
 import { useQueryClient } from "@tanstack/react-query";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { editClientSchema } from "../../lib/formSchema.ts";
+import FormError from "../../components/FormError.tsx";
 
 interface Props {
   client: Client;
@@ -33,7 +27,11 @@ interface Inputs {
  * @returns {JSX.Element}
  */
 function Edit({ client, setIsEditMode }: Props) {
-  const { register, handleSubmit } = useForm<Inputs>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<Inputs>({
     defaultValues: {
       nom: client.nom,
       tel: client.tel,
@@ -42,8 +40,10 @@ function Edit({ client, setIsEditMode }: Props) {
       code_postal: client.code_postal,
       ville: client.ville,
     },
+    resolver: yupResolver(editClientSchema),
+    mode: "onBlur",
   });
-
+  console.log("AXEL errors", errors);
   const queryClient = useQueryClient();
 
   const onSuccess = () => {
@@ -55,57 +55,10 @@ function Edit({ client, setIsEditMode }: Props) {
 
   /**
    * Fonction pour mettre a jour un client en base
-   * @param {string} name - Le nouveau nom du client
-   * @param {string} phone - Le nouveau numero de telephone du client
-   * @param {string} email - Le nouvel email du client
-   * @param {string} address - La nouvelle adresse du client
-   * @param {string} postalCode - Le nouveau code postal du client
-   * @param {string} city - La nouvelle ville du client
+   * @param {Inputs} data - Les datas du formulaire
+
    */
   const editClient = async (data: Inputs) => {
-    const { nom, tel, email, adresse, code_postal, ville } = data;
-    // Valide le nom ou la dénomination du client
-    const isNameValide = validateName(nom);
-    if (!isNameValide) {
-      alert("Nom ou denomination invalide");
-      return;
-    }
-
-    // Valide le téléphone du client
-    const isPhoneValide = validatePhone(tel);
-    if (!isPhoneValide) {
-      alert("Numéro de téléphone invalide");
-      return;
-    }
-
-    // Valide l'email du client
-    const isEmailValide = validateEmail(email);
-    if (!isEmailValide) {
-      alert("Email invalide");
-      return;
-    }
-
-    // Valide l'adresse du client
-    const isAddressValide = validateAddress(adresse);
-    if (!isAddressValide) {
-      alert("Adresse invalide");
-      return;
-    }
-
-    // Valide le code postal du client
-    const isPostalCodeValide = validatePostalCode(code_postal);
-    if (!isPostalCodeValide) {
-      alert("Code postal invalide");
-      return;
-    }
-
-    // Valide la ville du client
-    const isCityValide = validateCity(ville);
-    if (!isCityValide) {
-      alert("Ville invalide");
-      return;
-    }
-
     mutate({
       id: client.id,
       ...data,
@@ -128,78 +81,84 @@ function Edit({ client, setIsEditMode }: Props) {
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="nom">Prénom & NOM</label>
                   </td>
-                  <td className="px-4 text-left">
+                  <td className="px-4 flex items-center gap-2 flex text-left">
                     <input
                       type="text"
                       id="nom"
                       className="border border-slate-100 my-2 px-2 py-1"
                       {...register("nom")}
                     />
+                    <FormError fieldError={errors.nom} />
                   </td>
                 </tr>
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="tel">Téléphone</label>
                   </td>
-                  <td className="px-4 text-left">
+                  <td className="px-4 flex items-center gap-2 text-left">
                     <input
                       type="tel"
                       id="tel"
                       className="border border-slate-100 my-2 px-2 py-1"
                       {...register("tel")}
                     />
+                    <FormError fieldError={errors.tel} />
                   </td>
                 </tr>
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="email">Email</label>
                   </td>
-                  <td className="px-4 text-left">
+                  <td className="px-4 flex items-center gap-2 text-left">
                     <input
                       type="email"
                       className="border border-slate-100 my-2 px-2 py-1"
                       id="email"
                       {...register("email")}
                     />
+                    <FormError fieldError={errors.email} />
                   </td>
                 </tr>
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="adresse">Adresse</label>
                   </td>
-                  <td className="px-4 text-left">
+                  <td className="px-4 flex items-center gap-2 text-left">
                     <input
                       type="text"
                       className="border border-slate-100 my-2 px-2 py-1"
                       id="adresse"
                       {...register("adresse")}
                     />
+                    <FormError fieldError={errors.adresse} />
                   </td>
                 </tr>
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="code_postal">Code postal</label>
                   </td>
-                  <td className="px-4 text-left">
+                  <td className="px-4 flex items-center gap-2 text-left">
                     <input
                       type="number"
                       className="border border-slate-100 my-2 px-2 py-1"
                       id="code_postal"
                       {...register("code_postal")}
                     />
+                    <FormError fieldError={errors.code_postal} />
                   </td>
                 </tr>
                 <tr className="h-10">
                   <td className="border-r border-slate-200 px-4 text-right font-bold">
                     <label htmlFor="ville">Ville</label>
                   </td>
-                  <td className="px-4 text-left">
+                  <td className="px-4 flex items-center gap-2 text-left">
                     <input
                       type="text"
                       className="border border-slate-100 my-2 px-2 py-1"
                       id="ville"
                       {...register("ville")}
                     />
+                    <FormError fieldError={errors.ville} />
                   </td>
                 </tr>
               </tbody>
@@ -210,6 +169,7 @@ function Edit({ client, setIsEditMode }: Props) {
               type="button"
               onClick={() => setIsEditMode(false)}
               className="bg-white border border-slate-400 px-6 py-2 my-2 text-slate-400 rounded-md hover:underline"
+              disabled={isPending || !isValid || isSubmitting}
             >
               Annuler
             </button>

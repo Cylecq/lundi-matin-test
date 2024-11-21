@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 import ClientTable from "./ClientTable";
 import Box from "../../components/Box";
 import { useClients } from "../../api/client/hooks.ts";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { searchSchema } from "../../lib/formSchema.ts";
+import FormError from "../../components/FormError.tsx";
 
 interface Inputs {
-  search: string;
+  search?: string;
 }
 
 /**
@@ -17,16 +20,24 @@ interface Inputs {
  */
 const ClientSearch = (): JSX.Element => {
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<Inputs>();
   const [searchedName, setSearchedName] = useState("");
   const { data: clients, isLoading: loading } = useClients(searchedName);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid, errors, isSubmitting },
+  } = useForm<Inputs>({
+    resolver: yupResolver(searchSchema),
+    mode: "onSubmit",
+  });
 
   /**
    * Gestion de la soumission du formulaire
    * @param {Inputs} data le formulaire a traiter
    */
   const onSubmit = async (data: Inputs): Promise<void> => {
-    setSearchedName(data.search);
+    setSearchedName(data.search || "");
   };
 
   return (
@@ -47,11 +58,13 @@ const ClientSearch = (): JSX.Element => {
               className="w-full border border-slate-100 my-2 px-2 py-1"
               {...register("search")}
             />
+            <FormError fieldError={errors.search} />
           </div>
           <div className="flex justify-end">
             <button
               type="submit"
               className="bg-secondary px-6 py-2 my-2 text-white rounded-md hover:underline"
+              disabled={!isValid || isSubmitting}
             >
               Rechercher
             </button>

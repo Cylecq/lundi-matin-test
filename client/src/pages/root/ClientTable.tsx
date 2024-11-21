@@ -1,4 +1,3 @@
-import { Client } from "../../lib/types";
 import ClientRow from "./ClientRow";
 
 /**

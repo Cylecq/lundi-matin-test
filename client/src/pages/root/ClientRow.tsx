@@ -1,12 +1,16 @@
-import { Client } from "../../lib/types";
-
 /**
  * Composant de ligne de tableau pour afficher les informations d'un client
  * @param {Client} client - Les données du client
  * @param {(client: Client) => void} onViewClick - Fonction à appeler lors du clic sur le bouton "Voir"
  * @returns {JSX.Element}
  */
-const ClientRow = ({ client, onViewClick }: { client: Client; onViewClick: (client: Client) => void }) => (
+const ClientRow = ({
+  client,
+  onViewClick,
+}: {
+  client: Client;
+  onViewClick: (client: Client) => void;
+}) => (
   <tr className="border-b bg-white hover:bg-gray-50">
     <td className="px-4 py-3 flex items-center space-x-3">
       <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">

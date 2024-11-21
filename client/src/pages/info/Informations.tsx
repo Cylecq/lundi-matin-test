@@ -1,4 +1,3 @@
-import { Client } from "../../lib/types";
 import Box from "../../components/Box";
 
 type Props = {
@@ -22,19 +21,27 @@ function Informations({ client }: Props) {
         <table className="my-4">
           <tbody>
             <tr className="h-10">
-              <td className="border-r border-slate-200 px-4 text-right font-bold">Prénom & NOM</td>
+              <td className="border-r border-slate-200 px-4 text-right font-bold">
+                Prénom & NOM
+              </td>
               <td className="px-4 text-left">{client.nom}</td>
             </tr>
             <tr className="h-10">
-              <td className="border-r border-slate-200 px-4 text-right font-bold">Téléphone</td>
+              <td className="border-r border-slate-200 px-4 text-right font-bold">
+                Téléphone
+              </td>
               <td className="px-4 text-left">{client.tel}</td>
             </tr>
             <tr className="h-10">
-              <td className="border-r border-slate-200 px-4 text-right font-bold">Email</td>
+              <td className="border-r border-slate-200 px-4 text-right font-bold">
+                Email
+              </td>
               <td className="px-4 text-left">{client.email}</td>
             </tr>
             <tr className="h-10">
-              <td className="border-r border-slate-200 px-4 text-right font-bold">Adresse</td>
+              <td className="border-r border-slate-200 px-4 text-right font-bold">
+                Adresse
+              </td>
               <td className="px-4 text-left">
                 {client.adresse} <br />
                 {client.code_postal} {client.ville}
