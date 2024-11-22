@@ -1,6 +1,8 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import apiClient from "../api/apiClient.ts";
+import { IntlProvider } from "react-intl";
+import frTranslations from "../translations/fr.json";
 
 type Props = {
   children: React.ReactNode;
@@ -24,7 +26,9 @@ const Providers = ({ children }: Props) => {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <IntlProvider locale={"fr"} messages={frTranslations}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </IntlProvider>
   );
 };
 

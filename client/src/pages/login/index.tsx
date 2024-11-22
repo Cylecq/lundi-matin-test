@@ -4,6 +4,7 @@ import { useLogin } from "../../api/user/hooks.ts";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../lib/formSchema.ts";
 import FormError from "../../components/FormError.tsx";
+import { useIntl } from "react-intl";
 
 interface Inputs {
   username: string;
@@ -16,6 +17,7 @@ interface Inputs {
  * @returns {JSX.Element}
  */
 function Login() {
+  const { formatMessage } = useIntl();
   const {
     register,
     handleSubmit,
@@ -34,7 +36,7 @@ function Login() {
     <>
       <Box>
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-2xl">Login</h1>
+          <h1 className="text-2xl">{formatMessage({ id: "login.title" })}</h1>
         </div>
       </Box>
       <Box>
